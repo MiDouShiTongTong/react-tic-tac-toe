@@ -10,7 +10,6 @@ interface State {
   squareList: any;
   stepCount: number;
   historyList: any;
-  win: any;
 }
 
 export default class App extends React.Component<Props, State> {
@@ -19,8 +18,7 @@ export default class App extends React.Component<Props, State> {
     this.state = {
       stepCount: 0,
       squareList: new Array(9).fill(null),
-      historyList: [],
-      win: null
+      historyList: []
     };
   }
 
@@ -29,45 +27,13 @@ export default class App extends React.Component<Props, State> {
     return stepCount % 2 === 0 ? 'X' : 'O';
   };
 
-  public isWin = (squareList: any): any => {
-    const winCondition = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6]
-    ];
-    let flag: any = null;
-    winCondition.forEach(condition => {
-      const first = squareList[condition[0]];
-      const second = squareList[condition[1]];
-      const third = squareList[condition[2]];
-      if (first != null && first === second && second === third) {
-        flag = first;
-      }
-    });
-    return flag;
-  };
-
   public handlerSquareClick = (pos: any, info: object) => {
     const { state } = this;
     if (info === null) {
-      // 已经赢了, 不错任何操作
-      if (this.isWin(state.squareList)) {
-        return;
-      } else {
-        this.setState({
-          win: this.isWin(state.squareList)
-        });
-      }
       // 新的历史记录
-      // 截取到 stepCount, 因为改变历史记录会改变 stepCount
       const newHistoryList = state.historyList.slice(0, state.stepCount);
       newHistoryList.push({
-        stepCount: state.stepCount,
+        stepCount: state.stepCount + 1,
         player: this.getCurrentPlayer(),
         pos
       });
@@ -82,10 +48,6 @@ export default class App extends React.Component<Props, State> {
         squareList: newSquareList,
         historyList: newHistoryList
       }));
-      // 输赢判断
-      if (this.isWin(newSquareList)) {
-        this.setState({ win: this.isWin(newSquareList) });
-      }
     }
   };
 
@@ -94,7 +56,7 @@ export default class App extends React.Component<Props, State> {
     const { state } = this;
     const newSquareList: any = state.squareList;
     state.historyList.forEach((history: any) => {
-      if (history.stepCount <= historyItem.stepCount) {
+      if (history.pos <= historyItem.pos) {
         newSquareList[history.pos] = history.player;
       } else {
         newSquareList[history.pos] = null;
@@ -103,14 +65,6 @@ export default class App extends React.Component<Props, State> {
     this.setState({
       stepCount: historyItem.stepCount + 1,
       squareList: newSquareList
-    });
-  };
-
-  public handlerRestartClick = (): void => {
-    this.setState({
-      stepCount: 0,
-      squareList: new Array(9).fill(null),
-      historyList: []
     });
   };
 
@@ -125,11 +79,10 @@ export default class App extends React.Component<Props, State> {
           />
         </div>
         <div className="right-container">
-          <PlayerInfo win={state.win} currentPlayer={this.getCurrentPlayer()} />
+          <PlayerInfo currentPlayer={this.getCurrentPlayer()} />
           <HistoryList
             historyList={state.historyList}
             handlerHistoryClick={this.handlerHistoryClick}
-            handlerRestartClick={this.handlerRestartClick}
           />
         </div>
       </div>

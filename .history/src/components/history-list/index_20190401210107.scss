@@ -1,0 +1,16 @@
+.history-list-container {
+  margin-top: 15px;
+  font-size: 19px;
+  width: 200px;
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    li {
+      button {
+        width: 200px;
+        padding: 5px;
+        border: 1px solid #000;
+      }
+    }
+  }
+}

@@ -58,10 +58,6 @@ export default class App extends React.Component<Props, State> {
       // 已经赢了, 不错任何操作
       if (this.isWin(state.squareList)) {
         return;
-      } else {
-        this.setState({
-          win: this.isWin(state.squareList)
-        });
       }
       // 新的历史记录
       // 截取到 stepCount, 因为改变历史记录会改变 stepCount
@@ -125,7 +121,7 @@ export default class App extends React.Component<Props, State> {
           />
         </div>
         <div className="right-container">
-          <PlayerInfo win={state.win} currentPlayer={this.getCurrentPlayer()} />
+          <PlayerInfo currentPlayer={this.getCurrentPlayer()} />
           <HistoryList
             historyList={state.historyList}
             handlerHistoryClick={this.handlerHistoryClick}

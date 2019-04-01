@@ -1,0 +1,12 @@
+.square-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 79px;
+  height: 79px;
+  border: 1px solid #000;
+  font-size: 30px;
+  &:hover {
+    border-color: #06f;
+  }
+}

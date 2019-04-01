@@ -10,7 +10,6 @@ interface State {
   squareList: any;
   stepCount: number;
   historyList: any;
-  win: any;
 }
 
 export default class App extends React.Component<Props, State> {
@@ -19,8 +18,7 @@ export default class App extends React.Component<Props, State> {
     this.state = {
       stepCount: 0,
       squareList: new Array(9).fill(null),
-      historyList: [],
-      win: null
+      historyList: []
     };
   }
 
@@ -29,7 +27,8 @@ export default class App extends React.Component<Props, State> {
     return stepCount % 2 === 0 ? 'X' : 'O';
   };
 
-  public isWin = (squareList: any): any => {
+  public isWin = (): boolean => {
+    const { state } = this;
     const winCondition = [
       [0, 1, 2],
       [3, 4, 5],
@@ -40,28 +39,23 @@ export default class App extends React.Component<Props, State> {
       [0, 4, 8],
       [2, 4, 6]
     ];
-    let flag: any = null;
     winCondition.forEach(condition => {
-      const first = squareList[condition[0]];
-      const second = squareList[condition[1]];
-      const third = squareList[condition[2]];
+      const first = state.squareList[condition[0]];
+      const second = state.squareList[condition[1]];
+      const third = state.squareList[condition[2]];
       if (first != null && first === second && second === third) {
-        flag = first;
+        return true;
       }
     });
-    return flag;
+    return false;
   };
 
   public handlerSquareClick = (pos: any, info: object) => {
     const { state } = this;
     if (info === null) {
       // 已经赢了, 不错任何操作
-      if (this.isWin(state.squareList)) {
+      if (this.isWin()) {
         return;
-      } else {
-        this.setState({
-          win: this.isWin(state.squareList)
-        });
       }
       // 新的历史记录
       // 截取到 stepCount, 因为改变历史记录会改变 stepCount
@@ -83,9 +77,7 @@ export default class App extends React.Component<Props, State> {
         historyList: newHistoryList
       }));
       // 输赢判断
-      if (this.isWin(newSquareList)) {
-        this.setState({ win: this.isWin(newSquareList) });
-      }
+      this.isWin();
     }
   };
 
@@ -125,7 +117,7 @@ export default class App extends React.Component<Props, State> {
           />
         </div>
         <div className="right-container">
-          <PlayerInfo win={state.win} currentPlayer={this.getCurrentPlayer()} />
+          <PlayerInfo currentPlayer={this.getCurrentPlayer()} />
           <HistoryList
             historyList={state.historyList}
             handlerHistoryClick={this.handlerHistoryClick}
